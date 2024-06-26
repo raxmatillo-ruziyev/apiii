@@ -8,7 +8,7 @@ const Login = () => {
     
     useEffect(() => {
         if (!localStorage.getItem('access_token')) {
-            navigate('/');
+            navigate('/login');
         }
     }, [navigate]);
 
@@ -22,7 +22,7 @@ const Login = () => {
             if (res.data.success) {
                 localStorage.setItem('access_token', res.data.data.tokens.accessToken.token);
                 message.success('Muvafaqiyatli kirdingiz');
-                navigate('/home');
+                navigate('/');
             } else {
                 message.error('Xatolik bor');
             }
@@ -33,7 +33,7 @@ const Login = () => {
     };
 
     return (
-        <>
+        <div  className='container' >
             <Form
                 name="basic"
                 onFinish={onFinish}
@@ -73,7 +73,7 @@ const Login = () => {
                     </Button>
                 </Form.Item>
             </Form>
-        </>
+        </div>
     );
 };
 
