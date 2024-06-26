@@ -5,9 +5,11 @@ import Navbar from '../Navbar/Navbar';
 
 const Home = () => {
   return (
-    <div  className='container' >
-        <Navbar/>
+    <div  className='container'>
+      <div className="boxcha">
+         <Navbar/>
         <Outlet/>
+      </div>
 
     </div>
   );

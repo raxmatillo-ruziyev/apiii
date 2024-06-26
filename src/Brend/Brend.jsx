@@ -97,7 +97,7 @@ const Brend = () => {
   };
 
   return (
-    <div  className='container'  style={{ width: '1200px', margin: '0 auto', padding: '10px' }}>
+    <div  className='container'  style={{ width: '1000px', margin: '0 auto', padding: '10px' }}>
       
       <Button onClick={showModal} type="primary">Add</Button>
       <Table bordered caption={'Brend'} dataSource={data} columns={columns} rowKey="id" style={{ width: "1200px", margin: '5px auto' }} />
