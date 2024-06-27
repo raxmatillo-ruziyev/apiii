@@ -11,6 +11,8 @@ import { Button, Layout, Menu, theme } from 'antd';
 const { Header, Sider, Content } = Layout;
 import './Navbar.scss'
 import { Link, Outlet } from 'react-router-dom'
+import Location from '../Location/Location';
+import App from '../App';
 const Navbar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const {
@@ -82,6 +84,7 @@ const Navbar = () => {
             borderRadius: borderRadiusLG,
           }}
         >
+      
         
         </Content>
       </Layout>

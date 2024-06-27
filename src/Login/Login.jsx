@@ -9,7 +9,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   useEffect(()=>{
-    if(localStorage.getItem('access_token')) navigate('/car')
+    if(localStorage.getItem('access_token')) navigate('/city')
 },[])
   
 
