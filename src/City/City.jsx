@@ -5,7 +5,10 @@ import {  Outlet, useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 
 const City = () => {
-  
+  function longOut(){
+    localStorage.removeItem('access_token');
+    navigate('/login')
+  }
     const navigate = useNavigate()
     useEffect(()=>{
         if (!localStorage.getItem('access_token')) {
@@ -98,8 +101,11 @@ const City = () => {
 
   return (
     <div  className='container'  style={{ width: '1000px', margin: '0 auto', padding: '10px' }}>
-      
-      <Button onClick={showModal} type="primary">Add</Button>
+     
+    <div style={{display:'flex',justifyContent:'space-between'}}>
+    <Button onClick={showModal} type="primary">Add</Button>
+      <Button onClick={longOut} type='primary'>Long out</Button>
+    </div>
       <Table bordered caption={'City'} dataSource={data} columns={columns} rowKey="id" style={{ width: "1200px", margin: '5px auto' }} />
       <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <Form

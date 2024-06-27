@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import './Location.scss';
 import { Table, Button, Modal, Form, Input, Checkbox } from 'antd';
-import { Outlet, useNavigate } from 'react-router-dom';
+import {  Outlet, useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 
 const Location = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!localStorage.getItem('access_token')) {
-      navigate('/login');
-    }
-  }, [navigate]);
-
+    function longOut(){
+        localStorage.removeItem('access_token');
+        navigate('/login')
+      }
+  
+    const navigate = useNavigate()
+    useEffect(()=>{
+        if (!localStorage.getItem('access_token')) {
+            navigate('/login')
+        }
+    })
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
 
@@ -40,24 +42,16 @@ const Location = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      fetch('https://autoapi.dezinfeksiyatashkent.uz/api/locations', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    fetch('https://autoapi.dezinfeksiyatashkent.uz/api/locations')
+      .then(res => res.json())
+      .then(item => {console.log(item.data);
+        const transformedData = item.data.map((entry, index) => ({
+          ...entry,
+          index: index + 1,
+        }));
+        setData(transformedData);
       })
-        .then(res => res.json())
-        .then(item => {
-          console.log(item.data);
-          const transformedData = item.data.map((entry, index) => ({
-            ...entry,
-            index: index + 1,
-          }));
-          setData(transformedData);
-        })
-        .catch(error => console.error('Error fetching data:', error));
-    }
+      .catch(error => console.error('Error fetching data:', error));
   }, []);
 
   const columns = [
@@ -88,8 +82,8 @@ const Location = () => {
       key: 'action',
       render: (text, record) => (
         <div>
-          <Button type="primary" onClick={() => handleEdit(record)}>Edit</Button>
-          <Button type="primary" danger onClick={() => handleDelete(record.id)} style={{ marginLeft: '20px' }}>Delete</Button>
+          <Button type="primary" onClick={() => handleEdit(record)} >Edit</Button>
+          <Button type="primary" danger onClick={() => handleDelete(record.id)} style={{marginLeft:'20px'}}>Delete</Button>
         </div>
       ),
     },
@@ -107,7 +101,11 @@ const Location = () => {
 
   return (
     <div className='container' style={{ width: '1000px', margin: '0 auto', padding: '10px' }}>
-      <Button onClick={showModal} type="primary">Add</Button>
+      
+      <div style={{display:'flex',justifyContent:'space-between'}}>
+    <Button onClick={showModal} type="primary">Add</Button>
+      <Button onClick={longOut} type='primary'>Long out</Button>
+    </div>
       <Table bordered caption={'Location'} dataSource={data} columns={columns} rowKey="id" style={{ width: "1200px", margin: '5px auto' }} />
       <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <Form
@@ -145,7 +143,9 @@ const Location = () => {
             <Checkbox>Remember me</Checkbox>
           </Form.Item>
 
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Form.Item
+            wrapperCol={{ offset: 8, span: 16 }}
+          >
             <Button type="primary" htmlType="submit">
               Submit
             </Button>
