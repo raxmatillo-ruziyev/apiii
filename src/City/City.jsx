@@ -104,7 +104,7 @@ const City = () => {
      
     <div style={{display:'flex',justifyContent:'space-between'}}>
     <Button onClick={showModal} type="primary">Add</Button>
-      <Button onClick={longOut} type='primary'>Long out</Button>
+      <Button onClick={longOut} type='primary'>Log out</Button>
     </div>
       <Table bordered caption={'City'} dataSource={data} columns={columns} rowKey="id" style={{ width: "1200px", margin: '5px auto' }} />
       <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
