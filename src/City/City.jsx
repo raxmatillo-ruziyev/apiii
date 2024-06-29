@@ -71,8 +71,8 @@ useEffect(() => {
     },
     {
       title: 'Text',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'text',
+      key: 'text',
     },
     {
       title: 'Image',
