@@ -43,11 +43,13 @@ import Location from './Location/Location';
 import { AuthProvider } from './Login/ AuthContext';
 import PrivateRoute from './Login/PrivateRoute';
 import Login from './Login/Login';
+import { ToastContainer } from 'react-toastify';
 
 
 const App = () => {
   return (
     <AuthProvider>
+       <ToastContainer />
         <Routes>
           <Route path="/login" element={<Login/>} />
           <Route path="/" element={<PrivateRoute element={<Home />} />}>

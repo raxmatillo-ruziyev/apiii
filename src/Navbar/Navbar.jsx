@@ -30,7 +30,7 @@ const Navbar = () => {
           items={[
             {
               key: '1',
-              icon:  <Link className='nav-link' to={'/city'}>City</Link>,
+              icon:  <Link className='nav-link' to={'/city'}> City</Link>,
               // label: ',
             },
             {
@@ -55,7 +55,7 @@ const Navbar = () => {
             },
             {
               key: '6',
-              icon:   <Link className='nav-link' to={'/brend'}>Brend</Link>,
+              icon:   <Link className='nav-link'  to={'/brend'}>Brend</Link>,
               // label: 'nav 2',
             },
       
@@ -73,18 +73,22 @@ const Navbar = () => {
               width: 64,
               height: 64,
             }}
+       
           />
+  
+      
+      
         </Header>
+     
         <Content
           style={{
-            margin: '24px 16px',
-            padding: 24,
+         
             minHeight: 280,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
           }}
         >
-      
+      <Outlet/>
         
         </Content>
       </Layout>

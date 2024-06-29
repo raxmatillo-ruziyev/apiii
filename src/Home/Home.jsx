@@ -8,7 +8,6 @@ const Home = () => {
     <div  className='container'>
       <div className="boxcha">
          <Navbar/>
-        <Outlet/>
       </div>
 
     </div>
