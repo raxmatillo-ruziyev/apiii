@@ -1,62 +1,58 @@
 import React, { useEffect, useState } from 'react';
 import './City.scss';
-import { Table, Button, Modal, Form, Input, Checkbox, Upload } from 'antd';
-import {  Outlet, useNavigate } from 'react-router-dom';
+import { Table, Button, Modal, Form, Input, Popconfirm } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from '../Navbar/Navbar';
 import { toast } from 'react-toastify';
 
 const City = () => {
-  function longOut(){
+  const navigate = useNavigate();
+
+  function longOut() {
     localStorage.removeItem('access_token');
-    navigate('/login')
+    navigate('/login');
   }
-    const navigate = useNavigate()
-    useEffect(()=>{
-        if (!localStorage.getItem('access_token')) {
-            navigate('/login')
-        }
-    },[])
+
+  useEffect(() => {
+    if (!localStorage.getItem('access_token')) {
+      navigate('/login');
+    }
+  }, []);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
+  const [data, setData] = useState([]);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
-    form.submit();
-  };
-
   const handleCancel = () => {
     setIsModalOpen(false);
+    form.resetFields();
+    setSelectedRecord(null);
+    setIsEdit(false);
   };
 
-  const onFinish = (values) => {
-    console.log('Success:', values);
-    setIsModalOpen(false);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
-
-  const [data, setData] = useState([]);
-
-const getApi =()=>{
+  const getApi = () => {
     fetch('https://autoapi.dezinfeksiyatashkent.uz/api/cities')
       .then(res => res.json())
-      .then(item => {console.log(item.data);
+      .then(item => {
         const transformedData = item.data.map((entry, index) => ({
           ...entry,
           index: index + 1,
         }));
         setData(transformedData);
       })
-      .catch(error => console.error('Error fetching data:', error));}
-useEffect(() => {
-  getApi();
-},[])
+      .catch(error => console.error('Error fetching data:', error));
+  };
+
+  useEffect(() => {
+    getApi();
+  }, []);
 
   const columns = [
     {
@@ -90,74 +86,105 @@ useEffect(() => {
       title: 'Action',
       key: 'action',
       render: (text, record) => (
-        <div>
-          <Button type="primary" onClick={() => handleEdit(record)} >Edit</Button>
-          <Button type="primary" danger onClick={() => handleDelete(record.id)} style={{marginLeft:'20px'}}>Delete</Button>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Button type="primary" onClick={() => handleEdit(record)}>Edit</Button>
+          <Popconfirm
+            title="Delete the task"
+            description="Are you sure to delete this task?"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deleteApi(record.id)}
+          >
+            <Button type='primary' danger>Delete</Button>
+          </Popconfirm>
         </div>
       ),
     },
   ];
 
-  const handleEdit = (record) => {
-    console.log('Edit:', record);
-    // Add edit functionality here
-  };
+  // Add or Edit
+  const [name, setName] = useState('');
+  const [image, setImage] = useState(null);
+  const [text, setText] = useState('');
 
-  const handleDelete = (id) => {
-    console.log('Delete:', id);
-    // Add delete functionality here
-  };
+  const access_token = localStorage.getItem('access_token');
 
+  const onFinish = (values) => {
+    const formData = new FormData();
+    formData.append('name', values.name);
+    formData.append('images', image);
+    formData.append('text', values.text);
 
+    const url = isEdit 
+      ? `https://autoapi.dezinfeksiyatashkent.uz/api/cities/${selectedRecord.id}` 
+      : 'https://autoapi.dezinfeksiyatashkent.uz/api/cities';
 
+    const method = isEdit ? 'PUT' : 'POST';
 
-
-  //post
-  const [name , setName] = useState()
-  const [image , setImage] = useState()
-  const [text , setText] = useState()
-  const access_token = localStorage.getItem('access_token')
-  const formData  = new FormData();
-  formData.append('name',name)
-  formData.append('images',image)
-  formData.append('text',text)
-  
-
-
-  const addData =(e)=>{
-    e.preventDefault();
-  
-    fetch('https://autoapi.dezinfeksiyatashkent.uz/api/cities',{
-      method:'POST',
+    fetch(url, {
+      method: method,
       body: formData,
-      headers:{
-        'Authorization':`Bearer ${access_token}`
+      headers: {
+        'Authorization': `Bearer ${access_token}`
       },
-    
     })
-    .then(res=>res.json())
-    // addData()
-    .then(data=>{
-     if(data.success===true){
-      toast.success(data.message)
-      setIsModalOpen(false)
-      getApi()
-     }
-     else{ toast.error(data.message)}
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        toast.success(data.message);
+        setIsModalOpen(false);
+        getApi();
+      } else {
+        toast.error(data.message);
+      }
+    });
+  };
+
+  const handleEdit = (record) => {
+    setSelectedRecord(record);
+    setIsEdit(true);
+    form.setFieldsValue({
+      name: record.name,
+      text: record.text,
+    });
+    setIsModalOpen(true);
+  };
+
+  // Delete
+  const deleteApi = (id) => {
+    fetch(`https://autoapi.dezinfeksiyatashkent.uz/api/cities/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
     })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        toast.success('City deleted successfully');
+        getApi();
+      } else {
+        toast.error('Error deleting city');
+      }
+    })
+    .catch(error => {
+      console.error('Error deleting city:', error);
+      toast.error('Error deleting city');
+    });
+  };
 
-  }
-
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
 
   return (
-    <div  className='container'  style={{ width: '1000px', margin: '0 auto', padding: '10px' }}>
-     
-    <div style={{display:'flex',justifyContent:'space-between'}}>
-    <Button onClick={showModal} type="primary">Add</Button>
-      <Button onClick={longOut} type='primary'>Log out</Button>
-    </div>
+    <div className='container' style={{ width: '1000px', margin: '0 auto', padding: '10px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Button onClick={showModal} type="primary">Add</Button>
+        <Button onClick={longOut} type='primary'>Log out</Button>
+      </div>
       <Table bordered caption={'City'} dataSource={data} columns={columns} rowKey="id" style={{ width: "1200px", margin: '5px auto' }} />
-      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={null}>
+      <Modal title="Basic Modal" open={isModalOpen} onCancel={handleCancel} footer={null}>
         <Form
           form={form}
           name="basic"
@@ -167,37 +194,31 @@ useEffect(() => {
           layout='vertical'
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
-          
         >
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[{ required: true, message: 'Please input the name!' }]}
           >
-            <Input  onChange={(e)=>setName(e.target.value)}/>
+            <Input />
           </Form.Item>
           <Form.Item
             label="Text"
             name="text"
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[{ required: true, message: 'Please input the text!' }]}
           >
-            <Input  onChange={(e)=>setText(e.target.value)}/>
+            <Input />
           </Form.Item>
           <Form.Item
             label="Images"
             name="img"
-            rules={[{ required: true, message: 'Please input your password!' }]}
+            rules={[{ required: true, message: 'Please upload an image!' }]}
           >
-            <Input type='file' accept='image/*' onChange={(e)=>setImage(e.target.files[0])} />
+            <Input type='file' accept='image/*' onChange={handleImageChange} />
           </Form.Item>
-         
-
-          <Form.Item
-            wrapperCol={{ offset: 8, span: 16 }}
-          >
-            <Button onClick={addData} type="primary" htmlType="submit">
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit">
               Submit
             </Button>
           </Form.Item>
@@ -208,4 +229,3 @@ useEffect(() => {
 };
 
 export default City;
-

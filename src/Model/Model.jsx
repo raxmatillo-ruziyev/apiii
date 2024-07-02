@@ -42,7 +42,7 @@ const Model = () => {
 
   const [data, setData] = useState([]);
 
-  useEffect(() => {
+  const getApi =()=>{
     fetch('https://autoapi.dezinfeksiyatashkent.uz/api/models')
       .then(res => res.json())
       .then(item => {console.log(item.data);
@@ -52,8 +52,10 @@ const Model = () => {
         }));
         setData(transformedData);
       })
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
+      .catch(error => console.error('Error fetching data:', error));}
+useEffect(() => {
+  getApi();
+},[])
 
   const columns = [
     {

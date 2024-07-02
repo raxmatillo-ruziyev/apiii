@@ -10,3 +10,11 @@ const PrivateRoute = ({ element: Element }) => {
 };
 
 export default PrivateRoute;
+
+
+
+
+
+
+
+

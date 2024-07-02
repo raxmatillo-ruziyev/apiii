@@ -40,8 +40,7 @@ const Location = () => {
   };
 
   const [data, setData] = useState([]);
-
-  useEffect(() => {
+  const getApi =()=>{
     fetch('https://autoapi.dezinfeksiyatashkent.uz/api/locations')
       .then(res => res.json())
       .then(item => {console.log(item.data);
@@ -51,9 +50,10 @@ const Location = () => {
         }));
         setData(transformedData);
       })
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
-
+      .catch(error => console.error('Error fetching data:', error));}
+useEffect(() => {
+  getApi();
+},[])
   const columns = [
     {
       title: 'Index',

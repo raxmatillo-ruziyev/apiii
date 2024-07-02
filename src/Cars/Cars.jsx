@@ -42,19 +42,21 @@ const Cars = () => {
 
   const [data, setData] = useState([]);
 
-  useEffect(() => {
+  const getApi =()=>{
     fetch('https://autoapi.dezinfeksiyatashkent.uz/api/cars')
-      .then(res => res.json())
-      .then(item => {console.log(item?.data);
-        const transformedData = item.data.map((entry, index) => ({
-          ...entry.brand,
-          index: index + 1,
-        }));
-        setData(transformedData);
-      })
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
-
+    .then(res => res.json())
+    .then(item => {console.log(item?.data);
+      const transformedData = item.data.map((entry, index) => ({
+        ...entry.brand,
+        index: index + 1,
+      }));
+      setData(transformedData);
+    })
+    .catch(error => console.error('Error fetching data:', error));
+  }
+useEffect(() => {
+  getApi();
+},[])
   const columns = [
     {
       title: 'Index',
@@ -109,47 +111,42 @@ const Cars = () => {
     </div>
       <Table bordered caption={'Cars'} dataSource={data} columns={columns} rowKey="id" style={{ width: "1200px", margin: '5px auto' }} />
       <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <Form
+      <Form
           form={form}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           style={{ maxWidth: 600 }}
+          layout='vertical'
           initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
+          
         >
           <Form.Item
-            label="Username"
-            name="username"
+            label="Name"
+            name="name"
             rules={[{ required: true, message: 'Please input your username!' }]}
           >
-            <Input />
+            <Input  onChange={(e)=>setTitle(e.target.value)}/>
           </Form.Item>
-
+      
           <Form.Item
-            label="Password"
-            name="password"
+            label="Images"
+            name="img"
             rules={[{ required: true, message: 'Please input your password!' }]}
           >
-            <Input.Password />
+            <Input type='file' accept='image/*' onChange={(e)=>setImage(e.target.files[0])} />
           </Form.Item>
-
-          <Form.Item
-            name="remember"
-            valuePropName="checked"
-            wrapperCol={{ offset: 8, span: 16 }}
-          >
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
+         
 
           <Form.Item
             wrapperCol={{ offset: 8, span: 16 }}
           >
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
+            {/* <Button onClick={addData} type="primary" htmlType="submit"> */}
+              {/* Submit */}
+            {/* </Button> */}
           </Form.Item>
         </Form>
       </Modal>

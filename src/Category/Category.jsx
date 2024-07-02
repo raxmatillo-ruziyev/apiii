@@ -42,7 +42,7 @@ const Category = () => {
 
   const [data, setData] = useState([]);
 
-  useEffect(() => {
+  const getApi =()=>{
     fetch('https://autoapi.dezinfeksiyatashkent.uz/api/categories')
       .then(res => res.json())
       .then(item => {console.log(item.data);
@@ -52,19 +52,26 @@ const Category = () => {
         }));
         setData(transformedData);
       })
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
+      .catch(error => console.error('Error fetching data:', error));}
+useEffect(() => {
+  getApi();
+},[])
 
   const columns = [
     {
       title: 'Index',
-      dataIndex: 'index',
+      dataIndex: 'index', 
       key: 'index',
     },
     {
       title: 'Name',
       dataIndex: 'name_en',
       key: 'name_en',
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name_ru',
+      key: 'name_ru',
     },
     {
       title: 'Image',
@@ -82,23 +89,23 @@ const Category = () => {
       title: 'Action',
       key: 'action',
       render: (text, record) => (
-        <div>
-          <Button type="primary" onClick={() => handleEdit(record)} >Edit</Button>
-          <Button type="primary" danger onClick={() => handleDelete(record.id)} style={{marginLeft:'20px'}}>Delete</Button>
-        </div>
-      ),
-    },
-  ];
+          <div>
+            <Button type="primary" onClick={() => handleEdit(record)} >Edit</Button>
+            <Button type="primary" danger onClick={() => handleDelete(record.id)} style={{marginLeft:'20px'}}>Delete</Button>
+          </div>
+        ),
+      },
+    ];
 
-  const handleEdit = (record) => {
-    console.log('Edit:', record);
-    // Add edit functionality here
-  };
+    const handleEdit = (record) => {
+      console.log('Edit:', record);
+      // Add edit functionality here
+    };
 
-  const handleDelete = (id) => {
-    console.log('Delete:', id);
-    // Add delete functionality here
-  };
+    const handleDelete = (id) => {
+      console.log('Delete:', id);
+      // Add delete functionality here
+    };
 
   return (
     <div className='container' style={{ width: '1000px', margin: '0 auto', padding: '10px' }}>
